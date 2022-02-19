@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class MainMenu extends CI_Controller {
+class Nasabah extends CI_Controller {
 
 	public function index()
 	{   
@@ -26,6 +26,6 @@ class MainMenu extends CI_Controller {
             base_url()."assets/js/defaultJS/pages/dashboard2.js",
         ];
 
-		load_template('Menu/index.php', $data);
+		load_template('Menu/nasabah.php', $data);
 	}
 }
