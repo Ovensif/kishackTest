@@ -173,6 +173,12 @@
                         <p>Transaction</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="<?= base_url("Report") ?>" class="nav-link <?= (stripos(current_url(), 'report') !== FALSE) ? 'active' : '' ?>">
+                        <i class="nav-icon fa fa-book"></i>
+                        <p>Cetak Buku Tabungan</p>
+                    </a>
+                </li>
             </ul>
         </nav>
     </div>

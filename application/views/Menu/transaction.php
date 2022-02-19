@@ -30,7 +30,12 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1">Description</label>
-                                        <input type="text" name='description' class="form-control" id="description" placeholder="Ex : Pembayaran listrik..." required>
+                                        <select class="form-control" name="description" id="description" required>
+                                            <option value="setor_tunai">Setor Tunai</option>
+                                            <option value="beli_pulsa">Beli Pulsa</option>
+                                            <option value="bayar_listrik">Bayar Listrik</option>
+                                            <option value="tarik_tunai">Tarik Tunai</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -66,6 +71,31 @@
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">List Transaksi Terakhir!</h3>
+                        <!-- <button type="submit" id="daftar" class="btn btn-success" style="float: right;"><i class="fa fa-th-large" aria-hidden="true"></i> Filter</button> -->
+                    </div>
+                    <div class="card-body">
+                        <table id="example2" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>AccountID</th>
+                                    <th>Nasabah Name</th>
+                                    <th>Total Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
