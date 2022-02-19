@@ -6,6 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>AdminLTE 3 | Dashboard 2</title>
 
+    <!-- Default CSS -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/css/adminlte.min.css">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/plugins/toastr/toastr.min.css">
+
     <!-- Print all CSS Below! -->
     <?php foreach ($css_files as $key_css => $value_css) : ?>
         <link rel="stylesheet" href="<?= $value_css ?>">

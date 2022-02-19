@@ -1,31 +1,47 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Nasabah extends CI_Controller {
+class Nasabah extends CI_Controller
+{
 
-	public function index()
-	{   
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->load->model('Nasabah_model', 'nasabah');
+    }
+
+    public function index()
+    {
 
         $data['css_files'] = [
-            "https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback",
-            base_url()."assets/plugins/fontawesome-free/css/all.min.css",
-            base_url()."assets/plugins/overlayScrollbars/css/OverlayScrollbars.min.css",
-            base_url()."assets/css/adminlte.min.css"
         ];
-        $data['js_files'] = [
-            base_url()."assets/plugins/jquery/jquery.min.js",
-            base_url()."assets/plugins/bootstrap/js/bootstrap.bundle.min.js",
-            base_url()."assets/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js",
-            base_url()."assets/js/defaultJS/adminlte.js",
-            base_url()."assets/plugins/jquery-mousewheel/jquery.mousewheel.js",
-            base_url()."assets/plugins/raphael/raphael.min.js",
-            base_url()."assets/plugins/jquery-mapael/jquery.mapael.min.js",
-            base_url()."assets/plugins/jquery-mapael/maps/usa_states.min.js",
-            base_url()."assets/plugins/chart.js/Chart.min.js",
-            base_url()."assets/js/defaultJS/demo.js",
-            base_url()."assets/js/defaultJS/pages/dashboard2.js",
-        ];
+        $data['js_files'] = [];
 
-		load_template('Menu/nasabah.php', $data);
-	}
+        load_template('Menu/nasabah.php', $data);
+    }
+
+    public function register()
+    {
+        $name = $this->input->post('name', TRUE);
+
+        // Check if Any special charactrer input, except space!
+        $check  = preg_match('/[#$%^&*()+=\-\[\]\';,.\/{}|":<>?~\\\\]/', $name);
+
+        if ($check >= 1) :
+            $this->session->set_flashdata('alert', 'Tidak boleh ada special character pada nama anda!');
+            redirect(base_url('Nasabah'));
+        endif;
+
+        // Insert into database
+        $insert_nasabah = $this->nasabah->write(['name' => $name]);
+
+        if($insert_nasabah > 0):
+            $this->session->set_flashdata('success', "Nasabah : {$name} Berhasil di Tambahkan!");
+            redirect(base_url('Nasabah'));
+        else :
+            $this->session->set_flashdata('alert', "Gagal menambahkan Nasabah : {$name}");
+            redirect(base_url('Nasabah'));
+        endif;
+    }
 }
