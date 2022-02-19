@@ -10,6 +10,7 @@ class Transaction extends CI_Controller
 
         $this->load->model('Nasabah_model', 'nasabah');
         $this->load->model('Transaction_model', 'transaction');
+        $this->load->model('Datatable_model', "datatable_model");
     }
 
     public function index()
@@ -131,5 +132,64 @@ class Transaction extends CI_Controller
 
                 break;
         endswitch;
+    }
+
+    public function list_data()
+    {
+        // Const Variable
+        $table_name = "tb_transaction";
+
+        $select     = array("id_nasabah", "tb_nasabah.name", "transaction_date", "description", "type", "amount", "tb_transaction.point");
+        $order_col  = array(null, "id_nasabah", "tb_nasabah.name", "tb_transaction", "point");
+        $search_col = array();
+        $group_by   = array();
+        $order      = array("transaction_date" => "DESC");
+        $join       = array(
+            "tb_nasabah" => "tb_transaction.id_nasabah = tb_nasabah.id"
+        );
+        $left_join  = array();
+        $where      = array();
+        $where_in   = array();
+
+        $optionsAll = array(
+            "table_name" => $table_name,
+            "select"     => $select,
+            "join"       => $join,
+            "left_join"  => $left_join,
+            "order"      => $order,
+            "like"       => !empty($like) ? $like : array(),
+            "group_by"   => $group_by,
+        );
+
+        $options    = array_merge($optionsAll, array(
+            "order_col" => $order_col,
+            "search"    => $search_col,
+            "where"     => $where,
+            "where_in"  => $where_in
+        ));
+
+        $listdata   = $this->datatable_model->dt_get($options);
+        $data       = array();
+        $no         = $_POST['start'];
+
+        // Loop data
+        foreach ($listdata as $list) :
+            $no++;
+            $row              = array();
+
+            // Print data!
+            $row[] = $list->id_nasabah;
+            $row[] = $list->name;
+            $row[] = $list->point;
+
+            $data[] = $row;
+        endforeach;
+
+        echo json_encode(array(
+            "draw"              => $_POST['draw'],
+            "recordsTotal"      => $this->datatable_model->dt_all($optionsAll),
+            "recordsFiltered"   => $this->datatable_model->dt_filtered($options),
+            "data"              => $data
+        ));
     }
 }

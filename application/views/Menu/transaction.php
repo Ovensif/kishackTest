@@ -84,7 +84,6 @@
                         <table id="example2" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th>No</th>
                                     <th>AccountID</th>
                                     <th>Nasabah Name</th>
                                     <th>Total Points</th>
