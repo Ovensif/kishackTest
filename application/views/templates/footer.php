@@ -11,7 +11,7 @@
 <script src="<?= base_url() ?>assets/plugins/jquery-mapael/maps/usa_states.min.js"></script>
 <script src="<?= base_url() ?>assets/plugins/chart.js/Chart.min.js"></script>
 <script src="<?= base_url() ?>assets/js/defaultJS/demo.js"></script>
-<script src="<?= base_url() ?>assets/js/defaultJS/pages/dashboard2.js"></script>
+<!-- <script src="<?= base_url() ?>assets/js/defaultJS/pages/dashboard2.js"></script> -->
 <script src="<?= base_url() ?>assets/plugins/sweetalert2/sweetalert2.min.js"></script>
 <script src="<?= base_url() ?>assets/plugins/toastr/toastr.min.js"></script>
 

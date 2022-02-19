@@ -1,16 +1,93 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Transaction extends CI_Controller {
+class Transaction extends CI_Controller
+{
 
-	public function index()
-	{   
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->load->model('Nasabah_model', 'nasabah');
+        $this->load->model('Transaction_model', 'transaction');
+    }
+
+    public function index()
+    {
 
         $data['css_files'] = [
+            base_url()."assets/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css"
         ];
         $data['js_files'] = [
+            base_url()."assets/plugins/moment/moment.min.js",
+            base_url()."assets/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js",
+            base_url()."assets/js/customJS/transaction.js",
         ];
 
-		load_template('Menu/nasabah.php', $data);
-	}
+        load_template('Menu/transaction.php', $data);
+    }
+
+    public function register()
+    {
+        $name = $this->input->post('name', TRUE);
+        $description = $this->input->post('description', TRUE);
+        $amount = $this->input->post('amount', TRUE);
+        $credit_status = $this->input->post('credit_status', TRUE);
+        $transaction_date = $this->input->post('transaction_date', TRUE);
+
+        // Check if Any special charactrer input, except space!
+        $check  = preg_match('/[#$%^&*()+=\-\[\]\';,.\/{}|":<>?~\\\\]/', $name);
+
+        if ($check >= 1 || $check === FALSE) :
+            $this->session->set_flashdata('alert', 'Tidak boleh ada special character pada nama anda!');
+            redirect(base_url('Transaction'));
+        endif;
+        
+        // Check Nama Nasabah ada atau tidak!
+        $get_nasabah = (array)$this->nasabah->get_data([
+            "select"    => ["name", "id", "point"],
+            "where"     => ["name" => $name],
+            "single"     => true
+        ]);
+
+        if(empty($get_nasabah)):
+            $this->session->set_flashdata('alert', "Nasabah {$name}, Tidak di temukan!");
+            redirect(base_url('Transaction'));
+        endif;
+
+        // Check if Amount only contain Number
+        $check_amount = preg_match('/^[0-9]+$/', $amount);
+
+        if($check_amount == 0 || $check === FALSE):
+            $this->session->set_flashdata('alert', 'Amount hanya boleh di isi dengan angka!');
+            redirect(base_url('Transaction'));
+        endif;
+
+        // Check credit status
+        if(!in_array($credit_status, ['C', 'D'])):
+            $this->session->set_flashdata('alert', 'Type Credit Status tidak di temukan!');
+            redirect(base_url('Transaction'));
+        endif;
+
+        // Write data Transaction
+        $data_transaction = [
+            'id_nasabah' => $get_nasabah['id'],
+            'amount' => $amount,
+            'description' => $description,
+            'type' => $credit_status,
+            'transaction_ticket' => $transaction_ticket = $credit_status.date("YmdHis").$get_nasabah['id'],
+            'transaction_date' => date("Y-m-d", strtotime($transaction_date))
+        ];
+
+        // Input transaction data!
+        $register_transaction = $this->transaction->write($data_transaction);
+
+        if($register_transaction > 0):
+            $this->session->set_flashdata('success', 'Sukses memasukan data transaksi!');
+            redirect(base_url('Transaction'));
+        else:
+            $this->session->set_flashdata('alert', 'Tidak bisa memasukan data transaksi!');
+            redirect(base_url('Transaction'));
+        endif;
+    }
 }
