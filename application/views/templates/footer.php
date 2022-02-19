@@ -16,6 +16,9 @@
 <script src="<?= base_url() ?>assets/plugins/toastr/toastr.min.js"></script>
 
 <script>
+
+    let master_url = "<?= base_url() ?>";
+
     <?php if ($this->session->flashdata('alert')) : ?>
         var Toast = Swal.mixin({
             toast: true,

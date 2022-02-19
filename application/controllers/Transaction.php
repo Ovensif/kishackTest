@@ -80,8 +80,6 @@ class Transaction extends CI_Controller
             $update_point = true;
         endif;
 
-        exit;
-
         // Write data Transaction
         $data_transaction = [
             'id_nasabah' => $get_nasabah['id'],
