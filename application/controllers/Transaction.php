@@ -88,7 +88,8 @@ class Transaction extends CI_Controller
             'description' => $description,
             'type' => $credit_status,
             'transaction_ticket' => $transaction_ticket = $credit_status . date("YmdHis") . $get_nasabah['id'],
-            'transaction_date' => date("Y-m-d", strtotime($transaction_date))
+            'transaction_date' => date("Y-m-d", strtotime($transaction_date)),
+            'point' => $point
         ];
 
         $register_transaction = $this->transaction->write($data_transaction);
@@ -97,7 +98,7 @@ class Transaction extends CI_Controller
 
             // If updated point is true!
             if ($update_point) :
-                $point_update = $this->transaction->update(['id' => $get_nasabah['id']], ['point' => $point + (int)$get_nasabah['point']]);
+                $point_update = $this->nasabah->update(['id' => $get_nasabah['id']], ['point' => $point + (int)$get_nasabah['point']]);
             endif;
 
             $this->session->set_flashdata('success', 'Sukses memasukan data transaksi!');
@@ -106,32 +107,6 @@ class Transaction extends CI_Controller
             $this->session->set_flashdata('alert', 'Tidak bisa memasukan data transaksi!');
             redirect(base_url('Transaction'));
         endif;
-    }
-
-    public function point_accumulation($amount, $description)
-    {
-        $type_purchase = (stripos($description, 'pulsa') !== FALSE) ? 'pulsa' : 'listrik';
-
-        switch ($type_purchase):
-            case 'pulsa':
-
-                // Set Rule
-                if($amount >= 10001):
-
-                elseif($amount >= 30001):
-
-                else :
-                    return 0;
-                endif;
-
-
-                break;
-
-            case 'listrik' :
-            default:
-
-                break;
-        endswitch;
     }
 
     public function list_data()
@@ -143,7 +118,7 @@ class Transaction extends CI_Controller
         $order_col  = array(null, "id_nasabah", "tb_nasabah.name", "tb_transaction", "point");
         $search_col = array();
         $group_by   = array();
-        $order      = array("transaction_date" => "DESC");
+        $order      = array("id_transaction" => "DESC");
         $join       = array(
             "tb_nasabah" => "tb_transaction.id_nasabah = tb_nasabah.id"
         );
@@ -191,5 +166,63 @@ class Transaction extends CI_Controller
             "recordsFiltered"   => $this->datatable_model->dt_filtered($options),
             "data"              => $data
         ));
+    }
+
+
+    public function point_accumulation($amount, $description)
+    {
+        $type_purchase = (stripos($description, 'pulsa') !== FALSE) ? 'pulsa' : 'listrik';
+        $current_point = 0;
+        $first_diffrence = 0;
+        $first_bonus_point = 0;
+        $second_diffrence = 0;
+        $second_bonus_point = 0;
+
+        switch ($type_purchase):
+            case 'pulsa':
+
+                if ($amount <= 10000) return $current_point;
+
+                // Check if amounth get second point!
+                $second_diffrence = $amount - 30000;
+                if ($second_diffrence > 0) :
+                    $second_bonus_point = ($second_diffrence / 1000) * 2;
+                endif;
+
+                // Check if amounth get first point!
+                $first_diffrence = ($second_diffrence > 0) ? ($amount - 10000) - $second_diffrence : $amount - 10000;
+                if ($first_diffrence > 0) :
+                    $first_bonus_point = ($first_diffrence / 1000) * 1;
+                endif;
+
+                // Update current_point
+                $current_point = $first_bonus_point + $second_bonus_point;
+                return $current_point;
+                break;
+
+            case 'listrik':
+                if ($amount <= 10000) return $current_point;
+
+                // Check if amounth get second point!
+                $second_diffrence = $amount - 100000;
+                if ($second_diffrence > 0) :
+                    $second_bonus_point = ($second_diffrence / 2000) * 2;
+                endif;
+
+                // Check if amounth get first point!
+                $first_diffrence = ($second_diffrence > 0) ? ($amount - 50000) - $second_diffrence : $amount - 50000;
+                if ($first_diffrence > 0) :
+                    $first_bonus_point = ($first_diffrence / 2000) * 1;
+                endif;
+
+                // Update current_point
+                $current_point = $first_bonus_point + $second_bonus_point;
+                return $current_point;
+                break;
+
+            default:
+                return $current_point;
+                break;
+        endswitch;
     }
 }

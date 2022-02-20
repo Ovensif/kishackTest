@@ -174,10 +174,10 @@ class Nasabah_model extends CI_Model {
      * @param   array  $params
      * @return  int
      */
-	public function update($id, $params) {
-		if (empty($id)) return false;
+	public function update($update_params, $data) {
+		if (empty($update_params)) return false;
 
-        $this->db->update($this->_table, $params, array('request_id' => $id));
+        $this->db->update($this->_table, $data, $update_params);
 
          return $this->db->affected_rows() > 0;
 	}
